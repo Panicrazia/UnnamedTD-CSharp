@@ -1,0 +1,5 @@
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.csproj.AssemblyReference.cache
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.GeneratedMSBuildEditorConfig.editorconfig
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.AssemblyInfoInputs.cache
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.AssemblyInfo.cs
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.csproj.CoreCompileInputs.cache
