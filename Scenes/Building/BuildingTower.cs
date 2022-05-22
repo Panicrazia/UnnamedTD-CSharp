@@ -10,7 +10,7 @@ public class BuildingTower : BuildingBase
 	 
 	public new bool CheckAccessoryValid(String type)
 	{  
-		if(accessories.Has(type))
+		if(accessories.Contains(type))
 		{
 			return false;
 		//later on the accessory array will probs have fixed locations for Things (ie shooter [0], lens [1], etc)
@@ -20,7 +20,4 @@ public class BuildingTower : BuildingBase
 	
 	
 	}
-	
-	
-	
 }

@@ -8,7 +8,7 @@ using Array = Godot.Collections.Array;
 public class StartUp : Node
 {
 	 
-	public void _Ready()
+	public override void _Ready()
 	{  
 		GetNode("MainMenu/Margins/VBox/Play").Connect("pressed", this, "on_new_game_pressed");
 		GetNode("MainMenu/Margins/VBox/Quit").Connect("pressed", this, "on_quit_pressed");
@@ -18,7 +18,7 @@ public class StartUp : Node
 	public void OnNewGamePressed()
 	{  
 		GetNode("MainMenu").QueueFree();
-		var gameScene = GD.Load("res://Scenes/GameScene.tscn").Instance();
+		var gameScene = GD.Load<PackedScene>("res://Scenes/GameScene.tscn").Instance();
 		AddChild(gameScene);
 		
 	}
@@ -29,7 +29,4 @@ public class StartUp : Node
 	
 	
 	}
-	
-	
-	
 }

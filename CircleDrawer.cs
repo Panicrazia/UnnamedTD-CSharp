@@ -7,7 +7,7 @@ using Array = Godot.Collections.Array;
 
 public class CircleDrawer : Node2D
 {
-	 
+	 /*
 	// Declare member variables here. Examples:
 	// int a = 2;
 	// string b = "text";
@@ -65,5 +65,5 @@ public class CircleDrawer : Node2D
 	}
 	
 	
-	
+	*/
 }

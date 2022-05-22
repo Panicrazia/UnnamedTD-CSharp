@@ -7,25 +7,22 @@ using Array = Godot.Collections.Array;
 
 public class WaveTimer : Timer
 {
-	 
-	// Declare member variables here. Examples:
-	// int a = 2;
-	// string b = "text";
-	var countdownVar
+	public int ticks;
 	
-	public void _Ready()
+	public override void _Ready()
 	{  
 		Connect("timeout", this, "countdown");
 	
 	}
-	
+
 	public void Countdown()
-	{  
-		countdownVar-=1;
-		if countdownVar <= 0:
+	{
+		ticks -= 1;
+		if (ticks <= 0)
+		{
 			GD.Print("committing seppuku");
 			QueueFree();
-	
+		}
 	
 	}
 	

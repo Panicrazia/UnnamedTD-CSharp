@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using Godot;
 using Dictionary = Godot.Collections.Dictionary;
 using Array = Godot.Collections.Array;
@@ -8,22 +9,21 @@ using Array = Godot.Collections.Array;
 public class BuildingBase : Node2D
 {
 	 
-	public Array accessories  = new Array(){};
+	public List<String> accessories  = new List<String>();
 
 	public Vector2 gridLocation; //the location this is saved to in the GameScene
 	public bool isSelected = false;
 	
 	public void AddAccessory(String type)
-	{  
-		var accessory = GD.Load("res://Scenes/Accessory/Accessory"+ type +".tscn").Instance();
-		accessories.Append(type);
-		$Accessories.AddChild(accessory)
-	
+	{
+		accessories.Add(type);
+		var accessory = GD.Load<PackedScene>("res://Scenes/Accessory/Accessory"+ type +".tscn").Instance();
+		((YSort)GetNode("Accessories")).AddChild(accessory);
 	}
 	
 	public bool CheckAccessoryValid(String type)
 	{  
-		if(accessories.Has(type))
+		if(accessories.Contains(type))
 		{
 			return false;
 		//later on the accessory array will probs have fixed locations for Things (ie shooter [0], lens [1], etc)
@@ -33,28 +33,24 @@ public class BuildingBase : Node2D
 	
 	}
 	
-	public void _Ready()
-	{  
-	
-	}
-	
 	public void DoSelection(bool isBeingSelected)
 	{  
 		isSelected = isBeingSelected;
 		Update();
-		foreach(var value in $Accessories.GetChildren())
+		foreach(AccessoryOrb value in ((YSort)GetNode("Accessories")).GetChildren())
 		{
 			value.FlagSelection(isBeingSelected);
 	
 		}
 	}
 	
-	public Array GetSelectionInfo()
+	public object[] GetSelectionInfo()
 	{  
 		
-		return new Array(){};
-	
-	
+		return new object[3] { 6, Color.ColorN(""), new Vector2(.3f, .3f) };
+
+
+
 	}
 	
 	

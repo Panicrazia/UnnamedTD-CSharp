@@ -1,84 +1,67 @@
-
-using System;
 using Godot;
-using Dictionary = Godot.Collections.Dictionary;
-using Array = Godot.Collections.Array;
 
 
-public class projectile : Node2D
+public class Projectile : Node2D
 {
-	 
-	// Declare member variables here. Examples:
-	// int a = 2;
-	// string b = "text";
-	public int damage = 5;
-	public Array effects = new Array(){};
-	public __TYPE target = null;
-	public __TYPE velocity = Vector2.ZERO;
-	public float speedIncrement = .04f;
-	public __TYPE speed = speedIncrement * -5;
-	
-	// Called when the node enters the scene tree for the first time.
-	public void _Ready()
-	{  
-		pass ;// Replace with function body.
-	
-	
-	}
-	
-	public void _PhysicsProcess(__TYPE delta)
-	{  
-		if(speed < 1)
-		{
-				speed += speedIncrement;
-		}
-		if((target != null) && (target.GetRef()))
-		{
-			if(speed < 0)
-			{
-				velocity*=.99
-			}
-			else
-			{
-				var prediction = Vector2.RIGHT.Rotated(target.GetRef().GetParent().rotation) * delta * target.GetRef().GetParent().speed;
-				var pull = Mathf.Clamp(1000/(target.GetRef().GetGlobalTransform().origin - GetGlobalTransform().origin).LengthSquared(), 0, 1);
-				velocity *= (1-pull)
-				velocity += ((target.GetRef().GetGlobalTransform().origin + prediction - GetGlobalTransform().origin)).Normalized()*800*speed*pull;
-			}
-		}
-		else
-		{
-			target = GetParent().GetParent().GetTarget();
-			//ask parent for a new target || do whatever idk im !your boss
-		}
-		position += velocity * delta;
-	
-	//projectiles should look at their parent for a target, since the tower will be their daddy && will always have what its currently targeting
-	
-	}
-	
-	public void _OnProjectileAreaEntered(__TYPE area)
-	{  
-		if(area.IsInGroup("baddies"))
-		{
-			if(((target != null) && (area == target.GetRef())))
-			{
-				area.GetParent().Damage(damage);
-				area.GetParent().DoEffects(effects);
-				QueueFree();
-			
-	
-			}
-		}
-	}
-	
-	public void SetTarget(__TYPE targetToSet)
-	{  
-		target = Weakref(targetToSet);
-	
-	
-	}
-	
-	
-	
+
+    // REMEMBER THAT BEFORE IN GDSCRIPT TARGET WAS THE AREA, NOW IT IS THE ENEMY
+    public int damage = 5;
+    public object[] effects = new object[] { };
+    public WeakRef target = null;
+    public Vector2 velocity = Vector2.Zero;
+    public static float speedIncrement = .04f;
+    public float speed = speedIncrement * -5;
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+
+    }
+
+    public override void _PhysicsProcess(float delta)
+    {
+        if (speed < 1)
+        {
+            speed += speedIncrement;
+        }
+        if ((target != null) && (target.GetRef() != null))
+        {
+            Baddie trueTarget = (Baddie)target.GetRef();
+            float distanceToTargetSquared = (trueTarget.GetGlobalTransform().origin - GetGlobalTransform().origin).LengthSquared();
+            if (speed < 0)
+            {
+                velocity *= .99f;
+            }
+            else
+            {
+                var prediction = Vector2.Right.Rotated(trueTarget.Rotation) * delta * trueTarget.speed;
+                var pull = Mathf.Clamp(1000 / distanceToTargetSquared, 0, 1);
+                velocity *= (1 - pull);
+                velocity += ((trueTarget.GetGlobalTransform().origin + prediction - GetGlobalTransform().origin)).Normalized() * 800 * speed * pull;
+            }
+            //check if target should be hit
+            if (distanceToTargetSquared < 100) //should probs later be dependant on the enemy how close counts for hitting
+            {
+                trueTarget.Damage(damage);
+                trueTarget.DoEffects(effects);
+                QueueFree();
+            }
+        }
+        else
+        {
+            target = ((AccessoryOrb)GetParent().GetParent()).GetTarget();
+            //ask parent for a new target || do whatever idk im not your boss
+        }
+        Position += velocity * delta;
+    }
+
+    public void OnProjectileAreaEntered(Area2D area)
+    {
+        //can be used to determine booster rings and whatnot
+    }
+
+    public void SetTarget(Baddie targetToSet)
+    {
+        target = WeakRef(targetToSet);
+    }
 }

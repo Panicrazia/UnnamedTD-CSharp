@@ -7,21 +7,15 @@ using Array = Godot.Collections.Array;
 
 public class UI : CanvasLayer
 {
-	 
-	// Declare member variables here. Examples:
-	// int a = 2;
-	// string b = "text";
-	public Color colorDeny = new Color(1,0,0,.5);
-	public Color colorOkay = new Color(0,1,0,.5);
+	
+	public Color colorDeny = new Color(1,0,0,.5f);
+	public Color colorOkay = new Color(0,1,0,.5f);
 	
 	
 	
 	// Called when the node enters the scene tree for the first time.
-	public void _Ready()
+	public override void _Ready()
 	{  
-		pass ;// Replace with function body.
-	
-	
 	//building preveiws will need to change back to just sprites so you can build while paused
 	//func SetBuildingPreview(type, pos):
 	//	var dragTower = GD.Load("res://Scenes/Building" + type + ".tscn").Instance();
@@ -39,12 +33,5 @@ public class UI : CanvasLayer
 	//	GetNode("BuildingPreview").rect_position = pos;
 	//	if (GetNode("BuildingPreview/DragTower").modulate != color):
 	//		GetNode("BuildingPreview/DragTower").modulate = color;
-	//	pass
-	
-	
-	
 	}
-	
-	
-	
 }

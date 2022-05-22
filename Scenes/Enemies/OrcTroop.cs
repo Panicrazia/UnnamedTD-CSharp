@@ -5,22 +5,12 @@ using Dictionary = Godot.Collections.Dictionary;
 using Array = Godot.Collections.Array;
 
 
-public class OrcTroop : "res://Scenes/Enemies/baddie.gd"
+public class OrcTroop : Baddie
 {
-	 
-	public static readonly Vector2 BASEVelocity = new Vector2(25, 0.0);
-	//public void _PhysicsProcess(__TYPE delta)
-	{  
-	//	position += velocity * delta * speed;
+	public static readonly Vector2 BASE_VELOCITY = new Vector2(25f, 0.0f);
+	
+	public override void _Ready()
+	{
+		velocity = BASE_VELOCITY;
 	}
-	
-	public void _Ready()
-	{  
-		velocity = BASEVelocity;
-	
-	
-	}
-	
-	
-	
 }

@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using Godot;
 using Dictionary = Godot.Collections.Dictionary;
 using Array = Godot.Collections.Array;
@@ -11,9 +12,9 @@ public class GameScene : Node2D
 	public const int WAVETimeBetween = 30;
 
 	public MapBase mapNode;
-	public __TYPE waveInformation;
+	public Wave[] waveInformation;
 	public int currentWave = 1;
-	
+
 	public bool buildingMode = false;
 	public bool buildValid = false;
 	public Vector2 buildLocation;
@@ -24,10 +25,10 @@ public class GameScene : Node2D
 
 	public BuildingBase currentSelection; //should probably make this a node2d and have it determine if things are selectable with an ISelectable interface
 										  //(which lets me make things selectable very easily)
-	public Dictionary buildingList  = new Dictionary(){} ;//dictionary mapping vector2 coords to building roots
+	public Dictionary<Vector2, BuildingBase> buildingList = new Dictionary<Vector2, BuildingBase>(); //dictionary mapping vector2 coords to building roots
 
-	public Array selectionInfo;
-	public __TYPE selectionNode  = Weakref(null);
+	public object[] selectionInfo;
+	public WeakRef selectionNode  = WeakRef(null);
 	
 	public Color colorDeny = new Color(1,0,0,.5f);
 	public Color colorOkay = new Color(0,1,0,.5f);
@@ -35,7 +36,7 @@ public class GameScene : Node2D
 	//var tower = GD.Load("res://Scenes/BuildingTower.tscn");
 	
 	// Called when the node enters the scene tree for the first time.
-	public void _Ready()
+	public override void _Ready()
 	{  
 		//get correct map && store it
 		mapNode = (MapBase)GetNode("Map");
@@ -45,11 +46,9 @@ public class GameScene : Node2D
 		ModifyWaveInformation();
 		//bootleg gamestart
 		StartWave();
-		foreach(var i in GetTree().GetNodesInGroup("build_buttons"))
+		foreach(TextureButton i in GetTree().GetNodesInGroup("build_buttons"))
 		{
-			i.Connect("pressed", this, "initiate_build_mode", new Array(){i.GetName()});
-			
-	
+			i.Connect("pressed", this, "initiate_build_mode", new Array(){i.Name});
 		}
 	}
 
@@ -87,7 +86,7 @@ public class GameScene : Node2D
 			}
 			else
 			{
-				SelectBuilding(mapNode.GetNode<TileMap>("Collisions").WorldToMap(GetGlobalMousePosition() - mapNode.Position));
+                SelectBuilding(mapNode.GetNode<TileMap>("Collisions").WorldToMap(GetGlobalMousePosition() - mapNode.Position));
 			}
 		}
 	}
@@ -137,22 +136,21 @@ public class GameScene : Node2D
 		}
 		else
 		{
-			if((selectionInfo.Size() > 0 && !selection_node.GetRef()))
+			if((selectionInfo.Length > 0 && selectionNode.GetRef() != null )) //might be == null?
 			{
 				DisplaySelection();
-	
 			}
 		}
 	}
 	
 	public void DisplaySelection()
 	{
-		MagicCirclePNG magicalCircle = GD.Load("res://Scenes/MagicCirclePNG.tscn").Instance();
-		selectionNode = Godot.Object.WeakRef(magicalCircle);
+		MagicCirclePNG magicalCircle = (MagicCirclePNG)GD.Load<PackedScene>("res://Scenes/MagicCirclePNG.tscn").Instance();
+		selectionNode = WeakRef(magicalCircle);
 		//selection_info = new Array(){6, Color.deeppink, new Vector2(.2,.2)};
-		magicalCircle.SetCircle(selectionInfo[0]);
-		magicalCircle.SetColor(selectionInfo[1]);
-		magicalCircle.SetScale(selectionInfo[2]);
+		magicalCircle.SetCircle((int)selectionInfo.GetValue(0));
+		magicalCircle.SetColor((Color)selectionInfo.GetValue(1));
+		magicalCircle.Scale = ((Vector2)selectionInfo.GetValue(2));
 		GetNode("UI").AddChild(magicalCircle);
 		magicalCircle.Activate();
 		magicalCircle.Position = currentSelection.Position;
@@ -169,7 +167,6 @@ public class GameScene : Node2D
 		{
 			currentSelection.DoSelection(true);
 			selectionInfo = currentSelection.GetSelectionInfo();
-			selectionInfo = new Array(){6, Color.pink, new Vector2(.3,.3)};
 			//have tower get an outline
 			//_unit_overlay.Draw(_walkableCells)
 	
@@ -180,14 +177,13 @@ public class GameScene : Node2D
 	{  
 		currentSelection.DoSelection(false);
 		currentSelection = null;
-		selectionInfo = new Array(){};
-		if((selectionNode.GetRef()))
+		selectionInfo = new object[0];
+		MagicCirclePNG circle = (MagicCirclePNG)selectionNode.GetRef();
+		if (circle != null)
 		{
-			selectionNode.GetRef().Hide();
-			selectionNode.GetRef().QueueFree();
+			circle.Hide();
+			circle.QueueFree();
 			//selection_node == null
-	
-	
 		}
 	}
 	
@@ -210,7 +206,7 @@ public class GameScene : Node2D
 				cellValue = buildingsNode.GetCellv(cell);
 			}
 		}
-		if(!buildingList.Has(cell))
+		if(!buildingList.ContainsKey(cell))
 		{
 			return null;
 		}
@@ -265,7 +261,7 @@ public class GameScene : Node2D
 	{  
 		if(buildValid)
 		{
-			BuildingBase newBuilding = GD.Load("res://Scenes/"+ buildingCategory + "/"+ buildingCategory + buildingType+ ".tscn").Instance();
+			BuildingBase newBuilding = (BuildingBase)GD.Load<PackedScene>("res://Scenes/" + buildingCategory + "/" + buildingCategory + buildingType + ".tscn").Instance();
 			
 			newBuilding.Position = buildLocation*CELL_SIZE;
 			if(buildingSize%2 == 1)
@@ -286,15 +282,15 @@ public class GameScene : Node2D
 		if((checkCollisions))
 		{
 			TileMap collisions = mapNode.GetNode<TileMap>("Collisions");
-			Array positions = new Array(){};
-			foreach(var xVal in size)
+			List<Vector2> positions = new List<Vector2>();
+			for (int xVal=0; xVal < size; xVal++)
 			{
-				foreach(var yVal in size)
+				for(int yVal= 0; yVal < size; yVal++)
 				{
-					positions.Append(pos + new Vector2((xVal-floor(size/2)),(yVal-floor(size/2))));
+					positions.Add(pos + new Vector2((float)(xVal - Math.Floor(size / 2.0)), (float)(yVal - Math.Floor(size / 2.0))));
 				}
 			}
-			foreach(var value in positions)
+			foreach(Vector2 value in positions)
 			{
 				int check = collisions.GetCellv(value);
 				if((check == 0) || (check == 1) || (mapNode.GetNode<TileMap>("Buildings").GetCellv(value) != -1))
@@ -319,11 +315,11 @@ public class GameScene : Node2D
 		TileMap buildingMap = mapNode.GetNode<TileMap>("Buildings");
 		Vector2 mapPos = Vector2.Zero;
 		int numberForBuildingMap = 1;
-		foreach(var xVal in size)
+		for (int xVal = 0; xVal < size; xVal++)
 		{
-			foreach(var yVal in size)
+			for (int yVal = 0; yVal < size; yVal++)
 			{
-				mapPos = (pos + new Vector2((xVal - floor(size/2)),(yVal - floor(size/2))));
+				mapPos = (pos + new Vector2((float)(xVal - Math.Floor(size/2.0)), (float)(yVal - Math.Floor(size / 2.0))));
 				//collisions.SetCellv(mapPos, 0)
 				if(size == 1)
 				{
@@ -431,7 +427,7 @@ public class GameScene : Node2D
 	
 	public void StartWave()
 	{  
-		if((currentWave <= waveInformation.Size()))
+		if(currentWave <= waveInformation.Length)
 		{
 			if(currentWave <= 1)
 			{

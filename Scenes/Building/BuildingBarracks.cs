@@ -10,7 +10,7 @@ public class BuildingBarracks : BuildingBase
 
 	public Vector2 rallyPoint;
 	public Array soldiers  = new Array(){};
-	public __TYPE soldierType;
+	public Soldier soldierType;
 	public int maxSoldiers;
 	float deploySpread; //how far units will be from the center of the rally point
 	public float deploySpeed  = 1.0f;
