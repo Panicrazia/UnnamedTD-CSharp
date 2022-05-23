@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using Godot;
 using Dictionary = Godot.Collections.Dictionary;
 using Array = Godot.Collections.Array;
@@ -7,33 +8,32 @@ using Array = Godot.Collections.Array;
 
 public class Soldier : Node2D
 {
-	 
-	public Vector2 homePoint
+	//Have to add an IBattler interface for freindlies and enemies
+	public Vector2 homePoint;
 	public float speed  = 45.0f;
 	public int damage = 100;
-	public Array effects = new Array(){};
-	
-	public Array enemyArray = new Array(){};
-	public __TYPE currentTarget = null;
+	public object[] effects = new object[0];
+
+	public List<Baddie> enemyArray = new List<Baddie>();
+	public WeakRef currentTarget = null;
 	public bool inCombat  = false;
-	public int combatRange
-	public int engageRange
+	public float combatRange;
+	public float engageRange;
 	public int attackCooldown  = 120;
 	public int currentAttackCooldown  = 0;
 	//shot timers && range areas should probably be added via code to make new accessories !a massive pain inthe balls
 	
-	public void _Ready()
-	{  
-		combatRange = $HitBox/HitboxRange.shape.radius
-		engageRange = $EnemyDecection/EngageRange.shape.radius + 20
-	
+	public override void _Ready()
+	{
+		combatRange = ((CircleShape2D)((CollisionShape2D)GetNode("HitBox/HitboxRange")).Shape).Radius;
+		engageRange = ((CircleShape2D)((CollisionShape2D)GetNode("EnemyDecection/EngageRange")).Shape).Radius + 20;
 	}
-	
-	public void _PhysicsProcess(__TYPE delta)
+
+	public override void _PhysicsProcess(float delta)
 	{  
-		if((inCombat && currentTarget))
+		if((inCombat && (currentTarget != null)))
 		{
-			if((!current_target.GetRef())) //if enemy is dead
+			if(currentTarget.GetRef() == null) //if enemy is dead
 			{
 				inCombat = false;
 				SelectTarget();
@@ -52,62 +52,56 @@ public class Soldier : Node2D
 		}
 		else
 		{
-			if((!enemy_array.Empty()))
-			{
-				SelectTarget();
-			}
-			if((globalPosition.DistanceSquaredTo(homePoint) > 1))
+			SelectTarget();
+			if((GlobalPosition.DistanceSquaredTo(homePoint) > 1))
 			{
 				LookAt(homePoint);
-				position += Vector2.RIGHT.Rotated(rotation) * delta * speed;
+				Position += Vector2.Right.Rotated(Rotation) * delta * speed;
 			}
 		}
-		$Sprite.rotation = -rotation
+		((Sprite)GetNode("Sprite")).Rotation = -Rotation;
 		currentAttackCooldown -= 1;
-	
 	}
 	
 	public void AttackTarget()
 	{  
 		currentAttackCooldown = attackCooldown;
-		var actualTarget = currentTarget.GetRef().GetParent();
+		Baddie actualTarget = (Baddie)currentTarget.GetRef();
 		actualTarget.Damage(damage);
 		actualTarget.DoEffects(effects);
-	
 	}
 	
-	public bool MoveTowardsTarget(__TYPE delta)
+	public bool MoveTowardsTarget(float delta)
 	{   //returns true if already in range
-		var targetPosition = currentTarget.GetRef().GetGlobalTransform().origin;
-		var isWithinRange = (combatRange*combat_range) > (targetPosition - GetGlobalTransform().origin).LengthSquared();
-		if((!is_within_range))
+		Vector2 targetPosition = ((Baddie)currentTarget.GetRef()).GetGlobalTransform().origin;
+		bool isWithinRange = (combatRange* combatRange) > (targetPosition - GetGlobalTransform().origin).LengthSquared();
+		if(!isWithinRange)
 		{
 			LookAt(targetPosition);
-			position += Vector2.RIGHT.Rotated(rotation) * delta * speed;
+			Position += Vector2.Right.Rotated(Rotation) * delta * speed;
 		}
 		return isWithinRange;
 	
 	}
 	
-	public void _OnEnemyDecectionAreaEntered(__TYPE area)
+	public void OnEnemyDecectionAreaEntered(Area2D area)
 	{  
 		if(area.IsInGroup("baddies"))
 		{
-			enemyArray.Append(area);
-	
+			enemyArray.Add((Baddie)area.GetParent());
 		}
 	}
 	
-	public void _OnEnemyDecectionAreaExited(__TYPE area)
+	public void OnEnemyDecectionAreaExited(Area2D area)
 	{  
-		if(area.IsInGroup("baddies"))
+		if (area.IsInGroup("baddies"))
 		{
-			enemyArray.Erase(area);
-			if((currentTarget && currentTarget.GetRef() && area == currentTarget.GetRef()))
+			Baddie trueBaddie = (Baddie)area.GetParent();
+			enemyArray.Remove(trueBaddie);
+			if (currentTarget.GetRef() == trueBaddie)
 			{
 				currentTarget = null;
 				SelectTarget();
-	
 			}
 		}
 	}
@@ -115,15 +109,15 @@ public class Soldier : Node2D
 	public void SelectTarget()
 	{  
 		//friendly units should probably only target Closest (with exceptions for certain units)
-		if(enemyArray.Size() > 0)
+		if(enemyArray.Count > 0)
 		{
 			foreach(var enemy in enemyArray)
 			{
 				var targetPosition = enemy.GetGlobalTransform().origin;
-				var isWithinRange = (engageRange*engage_range) > (targetPosition.DistanceSquaredTo(homePoint));
+				var isWithinRange = (engageRange*engageRange) > (targetPosition.DistanceSquaredTo(homePoint));
 				if(isWithinRange)
 				{
-					currentTarget = Weakref(enemy);
+					currentTarget = WeakRef(enemy);
 					break;
 	//	for target in enemyArray:
 	//		#currently a very scuffed targetting system
@@ -131,20 +125,14 @@ public class Soldier : Node2D
 				}
 			}
 		}
-		if(currentTarget)
+		if(currentTarget != null)
 		{
-			inCombat = true;
-	
+			inCombat = true;	
 		}
 	}
 	
-	public __TYPE GetTarget()
+	public WeakRef GetTarget()
 	{  
 		return currentTarget;
-	
-	
 	}
-	
-	
-	
 }

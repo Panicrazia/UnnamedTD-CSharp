@@ -3,3 +3,7 @@ C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Un
 C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.AssemblyInfoInputs.cache
 C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.AssemblyInfo.cs
 C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.csproj.CoreCompileInputs.cache
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\bin\Debug\Untitled Tower Defence Game.dll
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\bin\Debug\Untitled Tower Defence Game.pdb
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.dll
+C:\USERS\MACKENZIE\DOCUMENTS\UNTITLED TOWER DEFENCE GAME\.mono\temp\obj\Debug\Untitled Tower Defence Game.pdb

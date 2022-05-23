@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Scenes/Units/Friendly/Soldier.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Units/Friendly/Soldier.cs" type="Script" id=1]
 [ext_resource path="res://Assets/soldier.png" type="Texture" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
@@ -29,5 +29,5 @@ monitorable = false
 [node name="EngageRange" type="CollisionShape2D" parent="EnemyDecection"]
 shape = SubResource( 2 )
 
-[connection signal="area_entered" from="EnemyDecection" to="." method="_on_EnemyDecection_area_entered"]
-[connection signal="area_exited" from="EnemyDecection" to="." method="_on_EnemyDecection_area_exited"]
+[connection signal="area_entered" from="EnemyDecection" to="." method="OnEnemyDecectionAreaEntered"]
+[connection signal="area_exited" from="EnemyDecection" to="." method="OnEnemyDecectionAreaExited"]

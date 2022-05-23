@@ -8,7 +8,7 @@ using Array = Godot.Collections.Array;
 public class BuildingTower : BuildingBase
 {
 	 
-	public new bool CheckAccessoryValid(String type)
+	public override bool CheckAccessoryValid(String type)
 	{  
 		if(accessories.Contains(type))
 		{
@@ -17,7 +17,5 @@ public class BuildingTower : BuildingBase
 		//checking if the building is valid is probs easier with a hardcoded enum || something like tower textures
 		}
 		return true;
-	
-	
 	}
 }

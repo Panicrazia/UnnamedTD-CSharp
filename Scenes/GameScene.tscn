@@ -4,8 +4,8 @@
 [ext_resource path="res://Assets/UI Buttons/blue_button03.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Building/BuildingTower.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Accessory/AccessoryOrb.png" type="Texture" id=4]
-[ext_resource path="res://Scenes/GameScene.gd" type="Script" id=5]
-[ext_resource path="res://Scenes/UI.gd" type="Script" id=6]
+[ext_resource path="res://Scenes/GameScene.cs" type="Script" id=5]
+[ext_resource path="res://Scenes/UI.cs" type="Script" id=6]
 [ext_resource path="res://Assets/Building/BuildingBarracks.png" type="Texture" id=7]
 [ext_resource path="res://Shaders/WorldEnvironmentShaderThingy.tres" type="Environment" id=10]
 
@@ -88,4 +88,4 @@ wait_time = 30.0
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 10 )
 
-[connection signal="timeout" from="WaveTimerBetween" to="." method="start_wave"]
+[connection signal="timeout" from="WaveTimerBetween" to="." method="StartWave"]

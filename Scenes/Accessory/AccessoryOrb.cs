@@ -86,8 +86,6 @@ public class AccessoryOrb : Node2D
 		if(area.IsInGroup("baddies"))
 		{
 			enemyArray.Add((Baddie)area.GetParent());
-	
-	
 		}
 	}
 	

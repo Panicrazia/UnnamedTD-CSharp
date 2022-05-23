@@ -14,14 +14,14 @@ public class BuildingBase : Node2D
 	public Vector2 gridLocation; //the location this is saved to in the GameScene
 	public bool isSelected = false;
 	
-	public void AddAccessory(String type)
+	public virtual void AddAccessory(String type)
 	{
 		accessories.Add(type);
 		var accessory = GD.Load<PackedScene>("res://Scenes/Accessory/Accessory"+ type +".tscn").Instance();
 		((YSort)GetNode("Accessories")).AddChild(accessory);
 	}
 	
-	public bool CheckAccessoryValid(String type)
+	public virtual bool CheckAccessoryValid(String type)
 	{  
 		if(accessories.Contains(type))
 		{
@@ -30,10 +30,9 @@ public class BuildingBase : Node2D
 		//checking if the building is valid is probs easier with a hardcoded enum || something like tower textures
 		}
 		return true;
-	
 	}
 	
-	public void DoSelection(bool isBeingSelected)
+	public virtual void DoSelection(bool isBeingSelected)
 	{  
 		isSelected = isBeingSelected;
 		Update();
@@ -44,15 +43,8 @@ public class BuildingBase : Node2D
 		}
 	}
 	
-	public object[] GetSelectionInfo()
+	public virtual object[] GetSelectionInfo()
 	{  
-		
-		return new object[3] { 6, Color.ColorN(""), new Vector2(.3f, .3f) };
-
-
-
+		return new object[3] { 6, Color.ColorN("Blue"), new Vector2(.3f, .3f) };
 	}
-	
-	
-	
 }

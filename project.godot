@@ -14,10 +14,6 @@ config/name="Untitled Tower Defence Game"
 run/main_scene="res://StartUp.tscn"
 config/icon="res://icon.png"
 
-[autoload]
-
-TowerTextures="res://Elements/TowerTextures.gd"
-
 [editor_plugins]
 
 enabled=PoolStringArray(  )

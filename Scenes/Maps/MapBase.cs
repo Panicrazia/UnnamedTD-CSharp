@@ -20,7 +20,7 @@ public class MapBase : Node2D
 	//public __TYPE instance;
 	//public __TYPE building;
 	
-	public PackedScene baddie = GD.Load<PackedScene>("res://Scenes/Baddie.tscn");
+	public PackedScene baddie = GD.Load<PackedScene>("res://Scenes/Units/Enemies/Baddie.tscn");
 	//buildings should be in a dictionary linking their name to their path
 	
 	// Called when the node enters the scene tree for the first time.
@@ -47,25 +47,25 @@ public class MapBase : Node2D
 
 	internal void StartWave(int waveNumber, Wave waveInfo)
 	{
-		foreach(WaveComponent wave in waveInfo)
+		foreach(WaveComponent waveComponent in waveInfo)
 		{
 			WaveTimer timer = (WaveTimer)GD.Load<PackedScene>("res://Scenes/WaveTimer.tscn").Instance();
-			timer.Name = waveNumber + " " + wave.GetBaddieType();
+			timer.Name = waveNumber + " " + waveComponent.BaddieType;
 			AddChild(timer, true);
-			timer.ticks = wave.GetAmount();
-			timer.Connect("timeout", this, "spawn_enemy", new Array(wave.GetBaddieType(), wave.GetHealth(), wave.GetArmor(), wave.GetEffects()));
-			timer.Start(wave.GetSeparationTime());
+			timer.ticks = waveComponent.Amount;
+			timer.Connect("timeout", this, "SpawnEnemy", new Array(waveComponent.BaddieType, waveComponent.BaseHealthMultiplier, waveComponent.BaseArmorMultiplier, waveComponent.Effects));
+			timer.Start(waveComponent.SeparationTime);
 		}
 	}
 
-	public void SpawnEnemy(string type, int health, float armor, object[] effects)
+	public void SpawnEnemy(string type, float health, float armor, object[] effects)
 	{
-		Baddie newEnemy = (Baddie)GD.Load<PackedScene>("res://Scenes/Enemies/" + type + ".tscn").Instance();
+		Baddie newEnemy = (Baddie)GD.Load<PackedScene>("res://Scenes/Units/Enemies/" + type + ".tscn").Instance();
 		newEnemy.SetSpawnInfo(health, armor, effects);
         //this will not always be the same random in each game, Im not sure if I want to keep that or to make it seeded to the map
         Vector2 spawnloc = (Vector2)spawnLocations[new Random().Next(spawnLocations.Count)];
 		((YSort)GetNode("Enemies")).AddChild(newEnemy);
-		newEnemy.Position = spawnloc + new Vector2(8,8);
+		newEnemy.Position = spawnloc - new Vector2(8,8);
 		newEnemy.UpdatePath(flowFieldPath);
 	}
 	
@@ -73,7 +73,7 @@ public class MapBase : Node2D
 	{  
 		foreach(Vector2 coordinates in ((TileMap)GetNode("SpawnLocations")).GetUsedCellsById(0))
 		{
-			spawnLocations.Add(coordinates*CELLSize);
+			spawnLocations.Add((coordinates*CELLSize) + new Vector2(CELLSize / 2, CELLSize / 2));
 		}
 	}
 	
@@ -88,8 +88,8 @@ public class MapBase : Node2D
 		Vector2 goal = (Vector2)((TileMap)GetNode("SpawnLocations")).GetUsedCellsById(1)[0];
 		TileMap collisionMap = ((TileMap)GetNode("Collisions"));
 		TileMap buildingMap = ((TileMap)GetNode("Buildings"));
-		Stack < Vector2> stack  = new Stack<Vector2>();
-		stack.Push(goal);
+		Queue < Vector2 > que  = new Queue<Vector2>();
+		que.Enqueue(goal);
 		Dictionary<Vector2, object[]> cameFrom  = new Dictionary<Vector2, object[]>();//dictionary of vector2 to an array containing vector2 && distance
 		Vector2 current;
 		Vector2 offset;
@@ -97,45 +97,64 @@ public class MapBase : Node2D
 		cameFrom[goal] = new object[] {null, 0};
 		//if(testLocations.Empty()):
 
-		((TileMap)GetNode("Pathing")).Clear(); //for visualizing the algorithm, otherwise useless
+		//for visualizing the algorithm, otherwise useless
+		((TileMap)GetNode("Pathing")).Clear(); 
 
-		while (stack.Count > 0)
+		while (que.Count > 0)
 		{
-			current = stack.Pop();
+			current = que.Dequeue();
 			offset = goal - current;
-
+			
+			
 			if (((offset.x + offset.y) % 2.0) == 0)
 			{
-				foreach (int direction in GD.Range(3, -1, -1))
+				for(int direction = 3; direction >= 0; direction--)
 				{
-					CheckNeighbors(direction, stack, cameFrom, current, testLocations, collisionMap, buildingMap);
+					CheckNeighbors(direction, que, cameFrom, current, testLocations, collisionMap, buildingMap);
 				}
 			}
 			else
 			{
-				foreach (int direction in GD.Range(0, 4, 1))
+				for (int direction = 0; direction < 4; direction++)
 				{
-					CheckNeighbors(direction, stack, cameFrom, current, testLocations, collisionMap, buildingMap);
+					CheckNeighbors(direction, que, cameFrom, current, testLocations, collisionMap, buildingMap);
 				}
 			}
 			
+			//for (int direction = 0; direction < 4; direction++)
+			//{
+			//	CheckNeighbors(direction, que, cameFrom, current, testLocations, collisionMap, buildingMap);
+			//}
 		}
 		return cameFrom;
 	}
 	
-	public void CheckNeighbors(int direction, Stack<Vector2> stack, Dictionary<Vector2, object[]> cameFrom, Vector2 current, List<Vector2> testLocations, TileMap collisionMap, TileMap buildingMap)
+	public void CheckNeighbors(int direction, Queue<Vector2> que, Dictionary<Vector2, object[]> cameFrom, Vector2 current, List<Vector2> testLocations, TileMap collisionMap, TileMap buildingMap)
 	{
 		Vector2 coordinates = current + (Vector2)(DIRECTIONS[direction]);
-
-		if (!(IsOnMapEdge(coordinates) || cameFrom.ContainsKey(coordinates) || testLocations.Contains(coordinates)))
+        if (cameFrom.ContainsKey(coordinates))
+        {
+			return;
+        }
+		if (IsOnMapEdge(coordinates))
+		{
+			return;
+		}
+		if (testLocations.Contains(coordinates))
+		{
+			return;
+		}
+		if (true)
 		{
 			if (((collisionMap.GetCellv(coordinates) == -1) && (buildingMap.GetCellv(coordinates) == -1)))
 			{
+				//GD.Print("checking " + coordinates);
 				cameFrom[coordinates] = new object[2] { current, 1 + (int)cameFrom[current][1]};
 
-				((TileMap)GetNode("Pathing")).SetCell((int)coordinates.x, (int)coordinates.y, direction); //for visualizing the algorithm, otherwise useless
+				//for visualizing the algorithm, otherwise useless
+				((TileMap)GetNode("Pathing")).SetCell((int)coordinates.x, (int)coordinates.y, direction); 
 
-				stack.Push(coordinates);
+				que.Enqueue(coordinates);
 			}
 		}
 	}
@@ -156,7 +175,7 @@ public class MapBase : Node2D
 	
 	public bool IsOnMapEdge(Vector2 coords)
 	{  
-		if(((coords.x < 0) || (coords.x > MAPBounds.x) || (coords.y < 0) || (coords.y > MAPBounds.y)))
+		if(((coords.x < -1) || (coords.x > MAPBounds.x) || (coords.y < -1) || (coords.y > MAPBounds.y)))
 		{
 			return true;
 		}
@@ -172,6 +191,4 @@ public class MapBase : Node2D
 			enemy.UpdatePath(flowFieldPath);
 		}
 	}
-
- 
 }

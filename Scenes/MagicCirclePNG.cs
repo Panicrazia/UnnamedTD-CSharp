@@ -29,6 +29,6 @@ public class MagicCirclePNG : Node2D
 
     public void SetColor(Color newColor)
     {
-        GetNode<Sprite>("PNGsprite").Modulate = newColor;
+        GetNode<Sprite>("PNGSprite").Modulate = newColor;
     }
 }

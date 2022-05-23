@@ -10,10 +10,11 @@ public class WaveInformation : Node
 {
 	 
 	public Wave[] baseWaveInformation = new Wave[]{
-		new Wave(new WaveComponent("OrcTroop", 10, 1, 15, 0, new Array(){})),
-        new Wave(new WaveComponent("OrcTroop", 10, 1, 15, 0, new Array(){}))
+		new Wave(new WaveComponent("OrcTroop", 10, 4, 1, 0, new object[]{})),
+        new Wave(new WaveComponent("OrcTroop", 30, .33f, 2, 0, new object[]{}))
         };
 	//format currently is:
+
 	//new Array(){
 	//new Array(){"type1", amount, separationTime, baseHealth, baseArmor, new Array(){list of effects they would have}},
 	//new Array(){"type2", amount, separationTime, baseHealth, baseArmor, new Array(){list of effects they would have}}, etc
@@ -25,72 +26,96 @@ public class WaveInformation : Node
 
 }
 
-public class Wave : IEnumerable<WaveComponent>
+public class Wave : IEnumerable//<WaveComponent>
 {
-    private WaveComponent waveComponent;
+    private List<WaveComponent> _waveComponent = new List<WaveComponent>();
 
     public Wave(WaveComponent waveComponent)//constructor needs to take variable arguments, all wavecomponents
     {
-        this.waveComponent = waveComponent;
+        _waveComponent.Add(waveComponent);
     }
 
-    public IEnumerator<WaveComponent> GetEnumerator()
+    public WaveEnum GetEnumerator()
     {
-        throw new NotImplementedException();
+        return new WaveEnum(_waveComponent);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        throw new NotImplementedException();
+        return (IEnumerator)GetEnumerator();
+    }
+    /*
+    IEnumerator<WaveComponent> IEnumerable<WaveComponent>.GetEnumerator()
+    {
+        return ((IEnumerable<WaveComponent>)_waveComponent).GetEnumerator();
+    }*/
+}
+
+public class WaveEnum : IEnumerator
+{
+    public List<WaveComponent> _waveComponent;
+
+    // Enumerators are positioned before the first element
+    // until the first MoveNext() call.
+    int position = -1;
+
+    public WaveEnum(List<WaveComponent> list)
+    {
+        _waveComponent = list;
+    }
+
+    public bool MoveNext()
+    {
+        position++;
+        return (position < _waveComponent.Count);
+    }
+
+    public void Reset()
+    {
+        position = -1;
+    }
+
+    object IEnumerator.Current
+    {
+        get
+        {
+            return Current;
+        }
+    }
+
+    public WaveComponent Current
+    {
+        get
+        {
+            try
+            {
+                return _waveComponent[position];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw new InvalidOperationException();
+            }
+        }
     }
 }
 
+
 public class WaveComponent
 {
-    private string v1;
-    private int v2;
-    private int v3;
-    private int v4;
-    private int v5;
-    private Array array;
+    public string BaddieType { get; }
+    public int Amount { get; }
+    public float SeparationTime { get; }
+    public float BaseHealthMultiplier { get; }
+    public float BaseArmorMultiplier { get; }
+    public object[] Effects { get; }
 
-    public WaveComponent(string v1, int v2, int v3, int v4, int v5, Array array)
+    public WaveComponent(string baddieType, int amount, float separationTime, float baseHealthMultiplier, float baseArmorMultiplier, object[] effects)
     {
-        this.v1 = v1;
-        this.v2 = v2;
-        this.v3 = v3;
-        this.v4 = v4;
-        this.v5 = v5;
-        this.array = array;
-    }
-
-    internal string GetBaddieType()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal int GetAmount()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal float GetSeparationTime()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal int GetHealth()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal int GetArmor()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal int GetEffects()
-    {
-        throw new NotImplementedException();
+        this.BaddieType = baddieType;
+        this.Amount = amount;
+        this.SeparationTime = separationTime;
+        this.BaseHealthMultiplier = baseHealthMultiplier;
+        this.BaseArmorMultiplier = baseArmorMultiplier;
+        this.Effects = effects;
     }
 }

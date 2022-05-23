@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\USERS\\MACKENZIE\\DOCUMENTS\\UNTITLED TOWER DEFENCE GAME\\Untitled Tower Defence Game.csproj": {}
+    "C:\\Users\\Mackenzie\\Documents\\Untitled Tower Defence Game\\Untitled Tower Defence Game.csproj": {}
   },
   "projects": {
-    "C:\\USERS\\MACKENZIE\\DOCUMENTS\\UNTITLED TOWER DEFENCE GAME\\Untitled Tower Defence Game.csproj": {
+    "C:\\Users\\Mackenzie\\Documents\\Untitled Tower Defence Game\\Untitled Tower Defence Game.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\USERS\\MACKENZIE\\DOCUMENTS\\UNTITLED TOWER DEFENCE GAME\\Untitled Tower Defence Game.csproj",
+        "projectUniqueName": "C:\\Users\\Mackenzie\\Documents\\Untitled Tower Defence Game\\Untitled Tower Defence Game.csproj",
         "projectName": "Untitled Tower Defence Game",
-        "projectPath": "C:\\USERS\\MACKENZIE\\DOCUMENTS\\UNTITLED TOWER DEFENCE GAME\\Untitled Tower Defence Game.csproj",
+        "projectPath": "C:\\Users\\Mackenzie\\Documents\\Untitled Tower Defence Game\\Untitled Tower Defence Game.csproj",
         "packagesPath": "C:\\Users\\Mackenzie\\.nuget\\packages\\",
-        "outputPath": "C:\\USERS\\MACKENZIE\\DOCUMENTS\\UNTITLED TOWER DEFENCE GAME\\.mono\\temp\\obj\\",
+        "outputPath": "C:\\Users\\Mackenzie\\Documents\\Untitled Tower Defence Game\\.mono\\temp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Mackenzie\\AppData\\Roaming\\NuGet\\NuGet.Config",
