@@ -135,11 +135,11 @@ public class GameScene : Node2D
             }
         }
         else
-        {
+        {/*
             if (selectionInfo.Length > 0 && selectionNode == null)
             {
                 DisplaySelection();
-            }
+            }*/
         }
     }
 
@@ -167,6 +167,7 @@ public class GameScene : Node2D
         {
             currentSelection.DoSelection(true);
             selectionInfo = currentSelection.GetSelectionInfo();
+            DisplaySelection();
             //have tower get an outline
             //_unit_overlay.Draw(_walkableCells)
 
@@ -178,7 +179,6 @@ public class GameScene : Node2D
         currentSelection.DoSelection(false);
         currentSelection = null;
         selectionInfo = new object[0];
-        
         MagicCirclePNG circle = (MagicCirclePNG)selectionNode.GetRef();
         if (circle != null)
         {

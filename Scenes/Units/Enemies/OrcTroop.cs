@@ -15,9 +15,11 @@ public class OrcTroop : Baddie
 
 	public override void _Ready()
 	{
+		/*
 		health = baseHealth;
 		armor = baseArmor;
 		speed = baseSpeed;
 		velocity = BASE_VELOCITY;
+		*/
 	}
 }

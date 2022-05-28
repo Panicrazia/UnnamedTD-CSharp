@@ -5,12 +5,11 @@
 [sub_resource type="CircleShape2D" id=1]
 
 [node name="baddie" type="Node2D"]
-script = null
 
 [node name="HitBox" type="Area2D" parent="." groups=["baddies"]]
 
-[node name="Sprite" type="Sprite" parent="HitBox"]
-texture = ExtResource( 1 )
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
 shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )

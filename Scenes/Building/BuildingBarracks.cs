@@ -10,7 +10,7 @@ public class BuildingBarracks : BuildingBase
 {
 
 	public Vector2 rallyPoint;
-	public List<Soldier> soldiers  = new List<Soldier>();
+	public Soldier[] soldiers; //actually needs to be an array
 	public PackedScene soldierType;
 	public int maxSoldiers;
 	float deploySpread; //how far units will be from the center of the rally point
@@ -22,6 +22,7 @@ public class BuildingBarracks : BuildingBase
 		((Timer)GetNode("SoldierSpawnTimer")).WaitTime = deploySpeed;
 		((Timer)GetNode("SoldierSpawnTimer")).Start();
 		maxSoldiers = 3;
+		soldiers = new Soldier[maxSoldiers];
 		soldierType = GD.Load<PackedScene>("res://Scenes/Units/Friendly/Soldier.tscn");
 	}
 	
@@ -59,31 +60,39 @@ public class BuildingBarracks : BuildingBase
 		return point;
 	}
 	
-	public void SpawnSoldier()
+	public void SpawnSoldier(int arrayPos)
 	{  
-		int soldierAmmount = soldiers.Count;
-		if(soldierAmmount < maxSoldiers)
-		{
-			Soldier soldier = (Soldier)soldierType.Instance();
-			((YSort)GetNode("Soldiers")).AddChild(soldier);
-			soldier.Position = ((Position2D)GetNode("SpawnPoint")).Position;
-			soldier.homePoint = GetPointArroundRally(soldierAmmount);
-			soldiers.Add(soldier);
-			if((soldierAmmount+1) == maxSoldiers)
-			{
-				((Timer)GetNode("SoldierSpawnTimer")).Stop();
-	
-			}
-		}
+		Soldier soldier = (Soldier)soldierType.Instance();
+		((YSort)GetNode("Soldiers")).AddChild(soldier);
+		soldier.Position = ((Position2D)GetNode("SpawnPoint")).Position;
+		soldier.homePoint = GetPointArroundRally(arrayPos);
+		soldiers[arrayPos] = soldier;
 	}
 	
 	public void OnSoldierSpawnTimerTimeout()
 	{
 		rallyPoint = GlobalPosition;
-		SpawnSoldier();
-	
+		int highestEmptySlot = -1;
+		for(int i = soldiers.Length-1; i >= 0; i--)
+        {
+			Soldier soldier = (Soldier)(soldiers[i]);
+			if (soldier == null /*|| soldier.isDisposed*/ || IsDead(soldier))
+            {
+				soldiers[i] = null;
+				highestEmptySlot = i;
+			}
+        }
+		if (highestEmptySlot != -1)
+		{
+			SpawnSoldier(highestEmptySlot);
+		}
 	}
-	
+
+	private static bool IsDead(Soldier s)
+	{
+		return !s.isAlive;
+	}
+
 	public void OnSoldierKilled(Soldier soldier)
 	{
 		((Timer)GetNode("SoldierSpawnTimer")).Start(deploySpeed);

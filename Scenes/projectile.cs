@@ -1,12 +1,11 @@
 using Godot;
-
+using System.Collections.Generic;
+using UntitledTowerDefenceGame.Scenes.Effects;
 
 public class Projectile : Node2D
 {
-
-    // REMEMBER THAT BEFORE IN GDSCRIPT TARGET WAS THE AREA, NOW IT IS THE ENEMY
     public int damage = 5;
-    public object[] effects = new object[] { };
+    public List<IEffect> effects = new List<IEffect>();
     public WeakRef target = null;
     public Vector2 velocity = Vector2.Zero;
     public static float speedIncrement = .04f;
@@ -42,15 +41,15 @@ public class Projectile : Node2D
             //check if target should be hit
             if (distanceToTargetSquared < 100) //should probs later be dependant on the enemy how close counts for hitting
             {
-                trueTarget.Damage(damage);
-                trueTarget.DoEffects(effects);
+                trueTarget.TakeDamage(damage);
+                trueTarget.TakeEffects(effects);
                 QueueFree();
             }
         }
         else
         {
             target = ((AccessoryOrb)GetParent().GetParent()).GetTarget();
-            //ask parent for a new target || do whatever idk im not your boss
+            //ask parent for a new target or do whatever idk im not your boss
         }
         Position += velocity * delta;
     }

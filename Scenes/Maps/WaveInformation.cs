@@ -10,17 +10,17 @@ public class WaveInformation : Node
 {
 	 
 	public Wave[] baseWaveInformation = new Wave[]{
-		new Wave(new WaveComponent("OrcTroop", 10, 4, 1, 0, new object[]{})),
-        new Wave(new WaveComponent("OrcTroop", 30, .33f, 2, 0, new object[]{}))
+		new Wave(new WaveComponent("OrcTroop", 10, 1f, 1.4f, 0, new object[]{})),
+        new Wave(new WaveComponent("OrcTroop", 30, .07f, 2, 0, new object[]{}))
         };
-	//format currently is:
+    //format currently is:
 
-	//new Array(){
-	//new Array(){"type1", amount, separationTime, baseHealth, baseArmor, new Array(){list of effects they would have}},
-	//new Array(){"type2", amount, separationTime, baseHealth, baseArmor, new Array(){list of effects they would have}}, etc
-	//}
+    //new Array(){
+    //new Array(){"type1", amount, separationTime, baseHealthMultiplier, baseArmorMultiplier, new Array(){list of effects they would have}},
+    //new Array(){"type2", amount, separationTime, baseHealthMultiplier, baseArmorMultiplier, new Array(){list of effects they would have}}, etc
+    //}
 
-	/*
+    /*
 	 * should make it so its an array of waves, and each wave contains the information needed
 	 */
 
