@@ -74,11 +74,17 @@ public class Baddie : Node2D, IBattler
             {
                 inCombat = false;
                 Vector2 positionAdjustment = ((Node2D)GetParent().GetParent()).Position;
-                path.TryGetValue(new Vector2(Mathf.Floor(Position.x / 16), Mathf.Floor(Position.y / 16)), out object[] potentialGoal);
-                Vector2 goal = lastValidGoal;
-                if (potentialGoal != null)
+                Vector2 goal;
+                if (path.TryGetValue(new Vector2(Mathf.Floor(Position.x / 16), Mathf.Floor(Position.y / 16)), out object[] potentialGoal))
                 {
                     goal = (Vector2)potentialGoal[0];
+                    lastValidGoal = goal;
+                }
+                else
+                {
+                    //TODO: make it so if you build on them then they just default to the base map for pathfinding,
+                    //currently this implimentation breaks by them just sticking in one spot if their last goal is also invalid
+                    goal = lastValidGoal;
                 }
                 
                 //Vector2 goal = (Vector2)path[new Vector2((int)(Position.x / 16), (int)(Position.y / 16))][0];

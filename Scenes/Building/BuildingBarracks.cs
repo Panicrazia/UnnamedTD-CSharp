@@ -76,7 +76,7 @@ public class BuildingBarracks : BuildingBase
 		for(int i = soldiers.Length-1; i >= 0; i--)
         {
 			Soldier soldier = (Soldier)(soldiers[i]);
-			if (soldier == null /*|| soldier.isDisposed*/ || IsDead(soldier))
+			if (soldier == null || IsDead(soldier))
             {
 				soldiers[i] = null;
 				highestEmptySlot = i;

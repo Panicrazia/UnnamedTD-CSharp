@@ -1,12 +1,13 @@
 using Godot;
 using System.Collections.Generic;
 using UntitledTowerDefenceGame.Scenes.Effects;
+using UntitledTowerDefenceGame.Scenes.Units;
 
 public class Projectile : Node2D
 {
     public int damage = 5;
     public List<IEffect> effects = new List<IEffect>();
-    public WeakRef target = null;
+    public IBattler target;
     public Vector2 velocity = Vector2.Zero;
     public static float speedIncrement = .04f;
     public float speed = speedIncrement * -5;
@@ -23,9 +24,9 @@ public class Projectile : Node2D
         {
             speed += speedIncrement;
         }
-        if ((target != null) && (target.GetRef() != null))
+        if (target != null && target.IsAlive)
         {
-            Baddie trueTarget = (Baddie)target.GetRef();
+            Baddie trueTarget = (Baddie)target;
             float distanceToTargetSquared = (trueTarget.GetGlobalTransform().origin - GetGlobalTransform().origin).LengthSquared();
             if (speed < 0)
             {
@@ -59,8 +60,8 @@ public class Projectile : Node2D
         //can be used to determine booster rings and whatnot
     }
 
-    public void SetTarget(Baddie targetToSet)
+    public void SetTarget(IBattler targetToSet)
     {
-        target = WeakRef(targetToSet);
+        target = targetToSet;
     }
 }
